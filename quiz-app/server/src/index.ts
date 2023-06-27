@@ -1,5 +1,7 @@
 import express from "express";
 import "dotenv/config";
+import morgan from "morgan";
+import cors from "cors";
 
 import userRouter from "./routes/user";
 import examRouter from "./routes/exam";
@@ -10,6 +12,8 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(morgan("dev"));
+app.use(cors());
 
 app.use("/users", userRouter);
 app.use("/exams", examRouter);

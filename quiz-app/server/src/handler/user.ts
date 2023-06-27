@@ -76,7 +76,7 @@ export const getUserInfoHandler: RequestHandler = async (req, res) => {
   try {
     const userId = res.locals.userId;
 
-    if (userId) {
+    if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
