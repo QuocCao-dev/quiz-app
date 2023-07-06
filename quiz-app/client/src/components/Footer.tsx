@@ -14,8 +14,9 @@ function Footer() {
         minHeight: "200px",
         mb: 0,
         alignItems: "flex-start",
-        backgroundColor: "rgb(13,128,216)",
-        color: "white",
+        backgroundColor: "rgb(255,255,255)",
+        fontFamily: "'Open Sans', sans-serif",
+        color: "rgb(25, 118, 210)",
       }}
     >
       <Box sx={{ width: "20%", marginRight: "150px" }}>
@@ -54,20 +55,44 @@ function Footer() {
           <Typography
             variant="subtitle1"
             className="footer-title"
-            sx={{ marginBottom: "10px" }}
+            sx={{
+              marginBottom: "10px",
+              fontWeight: "700",
+              color: "rgb(25, 118, 210)",
+            }}
           >
             Services
           </Typography>
-          <Link href="#" sx={{ textDecoration: "none", color: "inherit" }}>
+          <Link
+            href="#"
+            sx={{
+              textDecoration: "none",
+            }}
+          >
             Branding
           </Link>
-          <Link href="#" sx={{ textDecoration: "none", color: "inherit" }}>
+          <Link
+            href="#"
+            sx={{
+              textDecoration: "none",
+            }}
+          >
             Design
           </Link>
-          <Link href="#" sx={{ textDecoration: "none", color: "inherit" }}>
+          <Link
+            href="#"
+            sx={{
+              textDecoration: "none",
+            }}
+          >
             Marketing
           </Link>
-          <Link href="#" sx={{ textDecoration: "none", color: "inherit" }}>
+          <Link
+            href="#"
+            sx={{
+              textDecoration: "none",
+            }}
+          >
             Advertisement
           </Link>
         </Stack>
@@ -82,7 +107,11 @@ function Footer() {
           <Typography
             variant="subtitle1"
             className="footer-title"
-            sx={{ marginBottom: "10px" }}
+            sx={{
+              marginBottom: "10px",
+              fontWeight: "700",
+              color: "rgb(25, 118, 210)",
+            }}
           >
             Company
           </Typography>
@@ -110,7 +139,11 @@ function Footer() {
           <Typography
             variant="subtitle1"
             className="footer-title"
-            sx={{ marginBottom: "10px" }}
+            sx={{
+              marginBottom: "10px",
+              fontWeight: "700",
+              color: "rgb(25, 118, 210)",
+            }}
           >
             Legal
           </Typography>

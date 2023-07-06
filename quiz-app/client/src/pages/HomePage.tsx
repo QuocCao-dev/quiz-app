@@ -1,14 +1,19 @@
 import { CardMedia } from "@mui/material";
-import React from "react";
+import "./home.css"
 
 function HomePage() {
   return (
-    <CardMedia
-      component="img"
-      height="1600"
-      image="C:\Users\DUY VO\Desktop\FRONT-END\typescript\quiz-app\quiz-app\client\public\Sunflower-Background-Image.jpg" // Replace with the actual image path
-      alt="Image description"
-    />
+    <div>
+      <div id="scroll-container">
+        <div id="scroll-text">Quiz App will help you learn better.</div>
+      </div>
+      <CardMedia
+        component="img"
+        height="500"
+        image="../../public/Sunflower-Background-Image.jpg" // Replace with the actual image path
+        alt="Image description"
+      />
+    </div>
   );
 }
 
