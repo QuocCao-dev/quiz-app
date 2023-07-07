@@ -1,15 +1,35 @@
 import { Box, Typography, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { clearStoredUser, getStoredUser } from "../user_localStorage";
-import useGetme from "@/hooks/useGetme";
+import useGetme from "@/hooks/auth/useGetme";
 import { existingUser } from "@/models/userType";
 import { useEffect, useState } from "react";
-
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import Collapse from "@mui/material/Collapse";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 function NavBar() {
   const [token, setToken] = useState<string | null>(getStoredUser());
   const getMe = useGetme();
   const [infoUser, setInfoUser] = useState<existingUser | null>(null);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleSignout = () => {
+    clearStoredUser();
+    setInfoUser(null);
+    setToken(null);
+  };
+  const handleExam = () => {
+    setOpen(false);
+    navigate("/exams");
+  };
   useEffect(() => {
     setToken(getStoredUser());
     if (token) {
@@ -19,14 +39,7 @@ function NavBar() {
         },
       });
     }
-  }, [token]); // Only re-run the effect if token changes
-
-  const handleSignout = () => {
-    clearStoredUser();
-    setInfoUser(null);
-    setToken(null);
-  };
-
+  }, [token]);
   return (
     <Box
       sx={{
@@ -61,9 +74,23 @@ function NavBar() {
           </Button>
         )}
         {infoUser ? (
-          <Button component={Link} to="/profile">
-            Hello {infoUser?.data?.name}
-          </Button>
+          <List
+            sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+          >
+            <Button onClick={handleClick}>
+              Hello {infoUser?.data?.name}
+              {open ? <ExpandLess /> : <ExpandMore />}
+            </Button>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItemButton sx={{ pl: 4 }} onClick={handleExam}>
+                  <ListItemText primary="Your exams" />
+                </ListItemButton>
+              </List>
+            </Collapse>
+          </List>
         ) : (
           <Button component={Link} to="/register">
             Register

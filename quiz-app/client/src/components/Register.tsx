@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import Input from "./Input";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import useRegister from "../hooks/useRegister";
+import useRegister from "../hooks/auth/useRegister";
 import { useNavigate } from "react-router-dom";
 const initialVal = {
   email: "",

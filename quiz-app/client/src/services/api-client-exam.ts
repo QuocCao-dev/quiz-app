@@ -3,13 +3,7 @@ import axios from "axios";
 export interface FetchResponse<T> {
   results: T[];
 }
-export interface newTodo {
-  content: string;
-  name: string;
-  status: boolean;
-  deadline: string;
-  tags: string[];
-}
+
 const axiosInstance = axios.create({
   baseURL: "http://localhost:3000/",
 });
@@ -20,9 +14,14 @@ class APIClient<T> {
     this.endpoint = endpoint;
   }
 
-  getAll = (queryString: any) => {
+  getAll = (token: string) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
     return axiosInstance
-      .get<FetchResponse<T>>(this.endpoint + queryString)
+      .get<FetchResponse<T>>(this.endpoint, config)
       .then((res) => res);
   };
 
@@ -37,18 +36,17 @@ class APIClient<T> {
   delete = (id: number | string) => {
     return axiosInstance.delete<T>(this.endpoint + "/" + id).then((res) => res);
   };
-  post = (data: T) => {
-    return axiosInstance.post<T>(this.endpoint, data).then((res) => res.data);
-  };
-  postGetme = (token: string) => {
-    const config = {
+  post = (token: string, data: T) => {
+    //  const config = {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // };
+    return axiosInstance.post<T>(this.endpoint, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    };
-    return axiosInstance
-      .post<T>(this.endpoint, {}, config)
-      .then((res) => res.data);
+    }).then((res) => res.data);
   };
 
   put = (data: T) => {

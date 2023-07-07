@@ -1,6 +1,6 @@
-import {  useMutation } from "@tanstack/react-query";
-import { existingUser } from "../models/userType";
-import APIClient from "../services/api-client";
+import { useMutation } from "@tanstack/react-query";
+import { existingUser } from "../../models/userType";
+import APIClient from "../../services/api-client";
 import { getStoredUser } from "@/user_localStorage";
 
 const apiClient = new APIClient("/users/me");

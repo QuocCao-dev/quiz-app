@@ -1,8 +1,8 @@
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
-import { user } from "../models/userType";
-import APIClient from "../services/api-client";
-import { clearStoredUser, setStoredUser } from "../user_localStorage";
+import { user } from "../../models/userType";
+import APIClient from "../../services/api-client";
+import { clearStoredUser, setStoredUser } from "../../user_localStorage";
 import { toast } from "react-toastify";
 
 const apiClient = new APIClient<user>("/users/login");
@@ -20,7 +20,7 @@ const useLogin = () => {
       }
     },
     onError: () => {
-     toast.error('Maybe you enter wrong password or email')
+      toast.error("Maybe you enter wrong password or email");
     },
   });
 };

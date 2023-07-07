@@ -11,7 +11,7 @@ import {
 import { BasicUserSchema, user } from "../models/userType";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useLogin from "../hooks/useLogin";
+import useLogin from "../hooks/auth/useLogin";
 import { useNavigate } from "react-router-dom";
 import Input from "./Input";
 import backgroundImage from "../../public/Sunflower-Background-Image.jpg";
@@ -38,6 +38,7 @@ const Login = () => {
   const btnstyle = { margin: "8px 0" };
   const logIn = useLogin();
   const onSubmit = (data: user) => {
+    console.log(data);
     logIn.mutate(data);
   };
   logIn?.isSuccess && navigate("/");
@@ -52,7 +53,12 @@ const Login = () => {
           </Grid>
 
           <Input control={control} name="email" rules={{ required: true }} />
-          <Input control={control} name="password" rules={{ required: true }} />
+          <Input
+            control={control}
+            name="password"
+            rules={{ required: true }}
+            type="text"
+          />
           <FormControlLabel
             control={<Checkbox name="checkedB" color="primary" />}
             label="Remember me"
