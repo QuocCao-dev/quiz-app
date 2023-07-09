@@ -1,3 +1,4 @@
+import { getStoredUser } from "@/user_localStorage";
 import axios from "axios";
 
 export interface FetchResponse<T> {
@@ -13,11 +14,12 @@ class APIClient<T> {
   constructor(endpoint: string) {
     this.endpoint = endpoint;
   }
+  token = getStoredUser();
 
-  getAll = (token: string) => {
+  getAll = () => {
     const config = {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${this.token}`,
       },
     };
     return axiosInstance
@@ -36,17 +38,14 @@ class APIClient<T> {
   delete = (id: number | string) => {
     return axiosInstance.delete<T>(this.endpoint + "/" + id).then((res) => res);
   };
-  post = (token: string, data: T) => {
-    //  const config = {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    // };
-    return axiosInstance.post<T>(this.endpoint, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.data);
+  post = (data: T) => {
+    return axiosInstance
+      .post<T>(this.endpoint, data, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then((res) => res.data);
   };
 
   put = (data: T) => {

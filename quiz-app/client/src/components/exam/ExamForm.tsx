@@ -14,7 +14,8 @@ import Input from "../Input";
 import useAddExam from "@/hooks/exam/useAddExam";
 import { toast } from "react-toastify";
 import QuestionForm from "../question/QuestionForm";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
 const initialVal = {
   name: "",
   duration: 0,
@@ -26,21 +27,35 @@ function ExamForm() {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    reset,
+    formState,
+    formState: { isSubmitSuccessful, errors },
   } = useForm<exam>({
     defaultValues: initialVal,
     mode: "onChange",
     resolver: zodResolver(ExamSchema),
   });
   const { examId } = useParams();
-  console.log(examId);
+  const navigate = useNavigate();
   const postNewUser = useAddExam();
   const onSubmit = (data: exam) => {
+    console.log(data);
     postNewUser.mutate(data);
+    postNewUser.isError
+      ? toast.error(postNewUser.error?.response.data.message)
+      : null;
+    if (postNewUser.isSuccess) {
+      toast.success("Exam is added");
+      navigate("/exams");
+    }
   };
+  useEffect(() => {
+    if (formState.isSubmitSuccessful) {
+      reset(initialVal);
+    }
+  }, [formState, reset]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {postNewUser.isSuccess && toast.success("Create new exam successfully!")}
       <Card>
         <CardContent>
           <Typography variant="h4">Add Exam</Typography>
@@ -85,7 +100,7 @@ function ExamForm() {
                 type="string"
               />
             </Grid>
-            <QuestionForm />
+            {/* <QuestionForm /> */}
             {examId && <QuestionForm />}
           </Grid>
         </CardContent>
