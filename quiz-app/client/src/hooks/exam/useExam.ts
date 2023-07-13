@@ -8,13 +8,15 @@ import APIClient, { FetchResponse } from "@/services/api-client-exam";
 // i think tags: todoId[], but i can not defines todoId
 const apiClient = new APIClient<exam[]>("/exams");
 
-const useExams = () => {
-  return useQuery<FetchResponse<exam[]> | any>({
-    queryKey: ["exams", "list"],
-    queryFn: () => apiClient.getAll(),
+const useExam = (id: number) => {
+  return useQuery<FetchResponse<exam> | any>({
+    queryKey: ["exams", "details", id],
+    queryFn: () => apiClient.get(id),
     staleTime: ms("0s"),
-    enabled: true,
+    keepPreviousData: true,
+    retry: 0,
+    enabled: id,
   });
 };
 
-export default useExams;
+export default useExam;

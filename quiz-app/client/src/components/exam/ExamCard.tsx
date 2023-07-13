@@ -2,14 +2,19 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { Box, Button, CardActionArea, CardActions, Grid } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Button, CardActionArea } from "@mui/material";
 import DialogActions from "@mui/material/DialogActions";
 import CloseIcon from "@mui/icons-material/Close";
+import useDeleteExam from "@/hooks/exam/useDeleteExam";
+import useExam from "@/hooks/exam/useExam";
+import { Link, useNavigate } from "react-router-dom";
 function ExamCard(data: any) {
+  const deleteExam = useDeleteExam();
+  const navigate = useNavigate();
   const handleDelete = () => {
-    console.log(data?.data.id);
+    deleteExam.mutate(data?.data.id);
   };
+
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
@@ -35,7 +40,9 @@ function ExamCard(data: any) {
         </CardContent>
       </CardActionArea>
       <DialogActions>
-        <Button>Add Questions</Button>
+        <Link to={`/exams/${data?.data.id}/edit`}>
+          <Button>Add Questions</Button>
+        </Link>
       </DialogActions>
     </Card>
   );

@@ -41,6 +41,7 @@ class APIClient<T> {
     return axiosInstance.post<T>(this.endpoint, data).then((res) => res.data);
   };
   postGetme = (token: string) => {
+    console.log(token);
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -48,7 +49,8 @@ class APIClient<T> {
     };
     return axiosInstance
       .post<T>(this.endpoint, {}, config)
-      .then((res) => res.data);
+      .then((res) => res.data)
+      .catch((err) => console.log("getme err", err));
   };
 
   put = (data: T) => {

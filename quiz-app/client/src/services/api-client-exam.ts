@@ -15,28 +15,31 @@ class APIClient<T> {
     this.endpoint = endpoint;
   }
   token = getStoredUser();
-
+  config = {
+    headers: {
+      Authorization: `Bearer ${this.token}`,
+    },
+  };
   getAll = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-      },
-    };
+    console.log(this.endpoint, this.config);
     return axiosInstance
-      .get<FetchResponse<T>>(this.endpoint, config)
+      .get<FetchResponse<T>>(this.endpoint, this.config)
       .then((res) => res);
   };
 
   get = (id: number | string) => {
+    console.log(id);
     return axiosInstance
-      .get<T>(this.endpoint + "/" + id)
+      .get<T>(this.endpoint + "/" + id, this.config)
       .then((res) => res.data)
       .catch((error) => {
         throw error;
       });
   };
   delete = (id: number | string) => {
-    return axiosInstance.delete<T>(this.endpoint + "/" + id).then((res) => res);
+    return axiosInstance
+      .delete<T>(this.endpoint + "/" + id, this.config)
+      .then((res) => res);
   };
   post = (data: T) => {
     return axiosInstance
@@ -50,7 +53,7 @@ class APIClient<T> {
 
   put = (data: T) => {
     return axiosInstance
-      .put<T>(this.endpoint + "/" + `${data?.id}`, data)
+      .put<T>(this.endpoint + "/" + `${data?.id}`, data, this.config)
       .then((res) => res.data);
   };
 }

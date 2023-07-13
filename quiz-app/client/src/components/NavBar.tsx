@@ -10,36 +10,25 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import { useAuthStore } from "@/zustand/useAuthStore";
 function NavBar() {
-  const [token, setToken] = useState<string | null>(getStoredUser());
-  const getMe = useGetme();
-  const [infoUser, setInfoUser] = useState<existingUser | null>(null);
+
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-
+  const user = useAuthStore((state) => state.user);
   const handleClick = () => {
     setOpen(true);
   };
 
   const handleSignout = () => {
     clearStoredUser();
-    setInfoUser(null);
-    setToken(null);
+
   };
   const handleExam = () => {
     setOpen(false);
     navigate("/exams");
   };
-  useEffect(() => {
-    setToken(getStoredUser());
-    if (token) {
-      getMe.mutate(token, {
-        onSuccess: (data) => {
-          setInfoUser(data);
-        },
-      });
-    }
-  }, [token]);
+  
   return (
     <Box
       sx={{
@@ -64,7 +53,7 @@ function NavBar() {
         <Button component={Link} to="/">
           Home
         </Button>
-        {token ? (
+        {user ? (
           <Button component={Link} to="/" onClick={handleSignout}>
             LOGOUT
           </Button>
@@ -73,14 +62,14 @@ function NavBar() {
             LOGIN
           </Button>
         )}
-        {infoUser ? (
+        {user ? (
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
             component="nav"
             aria-labelledby="nested-list-subheader"
           >
             <Button onClick={handleClick}>
-              Hello {infoUser?.data?.name}
+              Hello {user?.name}
               {open ? <ExpandLess /> : <ExpandMore />}
             </Button>
             <Collapse in={open} timeout="auto" unmountOnExit>

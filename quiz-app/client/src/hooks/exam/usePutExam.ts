@@ -9,19 +9,19 @@ const apiClient = new APIClient<exam>("/exams");
 
 // Create a provider component
 
-const useDeleteExam = () => {
+const usePutExam = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate(); // Move useNavigate here
 
   return useMutation<exam, Error>({
-    mutationFn: (id: number) => apiClient.delete(id),
-
+    mutationFn: (newExam: exam) => apiClient.put(newExam),
+    
     onError: (err: any, newExam: exam, context: any) => {
-      toast.success("Exam is not deleted");
-      //   queryClient.setQueryData(["exams"], context.previousExams);
+      queryClient.setQueryData(["exams"], context.previousExams);
     },
     onSuccess: () => {
-      toast.success("Exam is deleted");
+      toast.success("Exam is added");
+      navigate("/exams");
     },
     // Always refetch after error or success:
     onSettled: () => {
@@ -30,4 +30,4 @@ const useDeleteExam = () => {
   });
 };
 
-export default useDeleteExam;
+export default usePutExam;

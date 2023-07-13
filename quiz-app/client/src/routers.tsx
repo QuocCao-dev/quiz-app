@@ -19,6 +19,7 @@ const router = createBrowserRouter([
       { path: "/exams", element: <ExamPage /> },
       { path: "/exams/add", element: <ExamForm /> },
       { path: "/exams/:id", element: <ExamForm /> },
+      { path: "/exams/:id/edit", element: <ExamForm /> },
     ],
   },
 ]);
