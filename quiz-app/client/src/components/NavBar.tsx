@@ -12,23 +12,22 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { useAuthStore } from "@/zustand/useAuthStore";
 function NavBar() {
-
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+  console.log(user);
   const handleClick = () => {
     setOpen(true);
   };
 
   const handleSignout = () => {
     clearStoredUser();
-
   };
   const handleExam = () => {
     setOpen(false);
     navigate("/exams");
   };
-  
+
   return (
     <Box
       sx={{
