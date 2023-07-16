@@ -1,4 +1,3 @@
-import { getStoredUser } from "@/user_localStorage";
 import axios from "axios";
 
 export interface FetchResponse<T> {
@@ -14,12 +13,13 @@ class APIClient<T> {
   constructor(endpoint: string) {
     this.endpoint = endpoint;
   }
-  token = getStoredUser();
+  token = localStorage.getItem("token");
   config = {
     headers: {
       Authorization: `Bearer ${this.token}`,
     },
   };
+
   getAll = () => {
     console.log(this.endpoint, this.config);
     return axiosInstance

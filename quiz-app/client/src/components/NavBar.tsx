@@ -11,23 +11,31 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { useAuthStore } from "@/zustand/useAuthStore";
-function NavBar() {
+
+
+function NavBar({userInfo}: any) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  console.log(user);
+  const clearToken = useAuthStore((state) => state.clearToken);
+
   const handleClick = () => {
     setOpen(true);
   };
 
   const handleSignout = () => {
-    clearStoredUser();
+    clearToken();
   };
   const handleExam = () => {
     setOpen(false);
     navigate("/exams");
   };
 
+  // useEffect(() => {
+  //   if (user) {
+  //     console.log(user);
+  //   }
+  // }, [user]);
   return (
     <Box
       sx={{
@@ -68,7 +76,7 @@ function NavBar() {
             aria-labelledby="nested-list-subheader"
           >
             <Button onClick={handleClick}>
-              Hello {user?.name}
+              Hello {user?.data?.name}
               {open ? <ExpandLess /> : <ExpandMore />}
             </Button>
             <Collapse in={open} timeout="auto" unmountOnExit>

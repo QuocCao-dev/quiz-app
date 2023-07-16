@@ -42,6 +42,10 @@ const Login = () => {
     logIn.mutate(data);
   };
   logIn?.isSuccess && navigate("/");
+  // call api getme with token
+  //  const token = useStore.getState().token;
+
+// set user infor useStore.getState().setUser(user);
 
   return (
     <div>

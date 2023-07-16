@@ -1,7 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { existingUser } from "../../models/userType";
 import APIClient from "../../services/api-client";
-import { getStoredUser } from "@/user_localStorage";
 import { useAuthStore } from "@/zustand/useAuthStore";
 
 const apiClient = new APIClient("/users/me");
@@ -9,17 +8,17 @@ const apiClient = new APIClient("/users/me");
 // Create a provider component
 
 const useGetme = () => {
-  const token = getStoredUser();
+  const token = useAuthStore((state) => state.token);
   const setUser = useAuthStore((state) => state.setUser);
-
   try {
-    const mutation = useMutation<existingUser, Error>({
-      mutationFn: (token: string) => apiClient.postGetme(token),
+    //useQuery
+    const query = useQuery<any>(["me"], () => apiClient.postGetme(token!), {
       onSuccess: (received: null | existingUser) => {
-        setUser(received?.data);
+        setUser(received);
       },
+      enabled: Boolean(token),
     });
-    return mutation;
+    return query;
   } catch (error: any) {}
 };
 

@@ -13,21 +13,26 @@ const useAddExam = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate(); // Move useNavigate here
 
-  return useMutation<exam, Error>({
-    mutationFn: (newExam: exam) => apiClient.post(newExam),
-
-    onError: (err: any, newExam: exam, context: any) => {
-      queryClient.setQueryData(["exams"], context.previousExams);
-    },
-    onSuccess: () => {
-      toast.success("Exam is added");
-      navigate("/exams");
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["exams"] });
-    },
-  });
+  try {
+    //useQuery
+    const mutation = useMutation<any>(
+      (newExam: exam) => apiClient.post(newExam),
+      {
+        onError: (err: any, newExam: exam, context: any) => {
+          queryClient.setQueryData(["exams"], context.previousExams);
+        },
+        onSuccess: () => {
+          toast.success("Exam is added");
+          navigate("/exams");
+        },
+        // Always refetch after error or success:
+        onSettled: () => {
+          queryClient.invalidateQueries({ queryKey: ["exams"] });
+        },
+      }
+    );
+    return mutation;
+  } catch (error: any) {}
 };
 
 export default useAddExam;

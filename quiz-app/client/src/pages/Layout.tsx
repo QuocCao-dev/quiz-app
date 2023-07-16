@@ -6,10 +6,14 @@ import Spinner from "../components/Spinner";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Container } from "@mui/material";
+import useGetme from "@/hooks/auth/useGetme";
+import { useEffect } from "react";
 
 const Layout = () => {
   // const isFetching = useIsFetching();
   // const isMutating = useIsMutating();
+  // token ? JSON.parse(token) : null;S
+  const { data: userInfo } = useGetme();
 
   return (
     <div className="relative min-h-screen flex flex-col">

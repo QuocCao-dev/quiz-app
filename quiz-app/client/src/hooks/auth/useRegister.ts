@@ -9,14 +9,18 @@ const apiClient = new APIClient<registerUser>("/users/register");
 
 const useRegister = () => {
   const queryClient = new QueryClient();
-  const navigate = useNavigate();
-  return useMutation<registerUser, Error>({
-    mutationFn: (newUser: registerUser) => apiClient.post(newUser),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["register"]);
-    },
-    onError: () => {},
-  });
+  try {
+    const mutation = useMutation<registerUser, Error>(
+      (newUser: registerUser) => apiClient.post(newUser),
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(["register"]);
+        },
+        onError: () => {},
+      }
+    );
+    return mutation;
+  } catch (error: any) {}
 };
 
 export default useRegister;

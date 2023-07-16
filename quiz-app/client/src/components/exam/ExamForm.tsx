@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   Grid,
+  IconButton,
   TextField,
   Typography,
 } from "@mui/material";
@@ -16,6 +17,9 @@ import { toast } from "react-toastify";
 import QuestionForm from "../question/QuestionForm";
 import { useNavigate, useParams, useHref } from "react-router-dom";
 import { useEffect } from "react";
+import React, { useState } from "react";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const initialVal = {
   name: "",
@@ -37,12 +41,18 @@ function ExamForm() {
     resolver: zodResolver(ExamSchema),
   });
   const { id: examId } = useParams();
-  const navigate = useNavigate();
+  const [questions, setQuestions] = useState([{}, {}, {}, {}]); // initialize with 4 questions
 
+  const handleAddQuestion = () => {
+    setQuestions([...questions, {}]); // Add a new question
+  };
+  const handleDeleteQuestion = (indexToDelete: number) => {
+    setQuestions(questions.filter((_, index) => index !== indexToDelete)); // Remove a specific question
+  };
   const postNewUser = useAddExam();
   const onSubmit = (data: exam) => {
     console.log(data);
-    postNewUser.mutate(data);
+    // postNewUser.mutate(data);
   };
   useEffect(() => {
     if (formState.isSubmitSuccessful) {
@@ -97,7 +107,36 @@ function ExamForm() {
                 type="string"
               />
             </Grid>
-            {examId && <QuestionForm />}
+            {examId &&
+              questions.map((question: any, index: number) => (
+                <React.Fragment key={index}>
+                  {index >= 4 && ( // Only show the DeleteIcon for questions after the first four
+                    <Grid item xs={1} style={{ textAlign: "right" }}>
+                      <IconButton
+                        aria-label="delete"
+                        color="primary"
+                        onClick={() => handleDeleteQuestion(index)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Grid>
+                  )}
+                  <QuestionForm />
+                </React.Fragment>
+              ))}
+            <Grid
+              item
+              xs={12}
+              sx={{
+                marginTop: "5px",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <IconButton color="primary" onClick={handleAddQuestion}>
+                <AddIcon />
+              </IconButton>
+            </Grid>
           </Grid>
         </CardContent>
       </Card>
