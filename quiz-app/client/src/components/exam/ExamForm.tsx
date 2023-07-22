@@ -1,4 +1,4 @@
-import { ExamSchema, exam } from "@/models/examType";
+import { examSchema, Exam } from "@/models/examType";
 import {
   Box,
   Button,
@@ -20,6 +20,7 @@ import { useEffect } from "react";
 import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useExam from "@/hooks/exam/useExam";
 
 const initialVal = {
   name: "",
@@ -33,13 +34,15 @@ function ExamForm() {
     handleSubmit,
     control,
     reset,
+    resetField,
     formState,
     formState: { isSubmitSuccessful, errors },
-  } = useForm<exam>({
+  } = useForm<Exam>({
     defaultValues: initialVal,
     mode: "onChange",
-    resolver: zodResolver(ExamSchema),
+    resolver: zodResolver(examSchema),
   });
+  console.log(formState);
   const { id: examId } = useParams();
   const [questions, setQuestions] = useState([{}, {}, {}, {}]); // initialize with 4 questions
 
@@ -50,10 +53,24 @@ function ExamForm() {
     setQuestions(questions.filter((_, index) => index !== indexToDelete)); // Remove a specific question
   };
   const postNewUser = useAddExam();
-  const onSubmit = (data: exam) => {
+  const onSubmit = (data: Exam) => {
     console.log(data);
-    // postNewUser.mutate(data);
+    postNewUser?.mutate(data!);
   };
+  const [isEditing, setIsEditing] = useState(false);
+  const [existingExam, setExistingExam] = useState(null);
+  const { data: exam } = useExam(Number(examId));
+  useEffect(() => {
+    if (exam) {
+      setExistingExam(exam);
+      reset(exam); // Setting form data to existing exam data
+      setIsEditing(true);
+    } else {
+      setExistingExam(null);
+      reset(initialVal); // Setting form data to initial value
+      setIsEditing(false);
+    }
+  }, [exam]);
   useEffect(() => {
     if (formState.isSubmitSuccessful) {
       reset(initialVal);
@@ -110,6 +127,7 @@ function ExamForm() {
             {examId &&
               questions.map((question: any, index: number) => (
                 <React.Fragment key={index}>
+                  <QuestionForm indexQuestion={index} />
                   {index >= 4 && ( // Only show the DeleteIcon for questions after the first four
                     <Grid item xs={1} style={{ textAlign: "right" }}>
                       <IconButton
@@ -121,7 +139,6 @@ function ExamForm() {
                       </IconButton>
                     </Grid>
                   )}
-                  <QuestionForm />
                 </React.Fragment>
               ))}
             <Grid
@@ -134,7 +151,7 @@ function ExamForm() {
               }}
             >
               <IconButton color="primary" onClick={handleAddQuestion}>
-                <AddIcon />
+                Add new question{" "}
               </IconButton>
             </Grid>
           </Grid>

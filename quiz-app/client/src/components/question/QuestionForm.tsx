@@ -1,4 +1,4 @@
-import { QuestionSchema, exam } from "@/models/examType";
+import { questionSchema, Question } from "@/models/examType";
 import React, { useState } from "react";
 
 import {
@@ -9,45 +9,92 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "../Input";
 import useAddExam from "@/hooks/exam/useAddExam";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import useAddQuestion from "@/hooks/question/useAddQuestion";
+import { useParams } from "react-router-dom";
+import { useFieldArray } from "react-hook-form";
+import useDeleteQuestion from "@/hooks/question/useDeleteQuestion";
+
 const initialVal = {
   name: "",
-  duration: 0,
-  category: "",
-  totalMarks: 0,
-  passingMarks: 0,
+  correctOption: "",
+  options: [{}, {}],
+  examId: null,
 };
-function QuestionForm() {
+type QuestionFormProps = {
+  indexQuestion: number;
+};
+
+const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
   const {
+    watch,
     handleSubmit,
+    register,
+    reset,
     control,
     formState: { errors },
-  } = useForm<exam>({
+  } = useForm<any>({
     defaultValues: initialVal,
     mode: "onChange",
-    resolver: zodResolver(QuestionSchema),
+    // resolver: zodResolver(questionSchema),
   });
+  const { id: idOfExam } = useParams();
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const postNewUser = useAddExam();
-  const onSubmit = (data: exam) => {
-    console.log(data);
-    // postNewUser.mutate(data);
-  };
+  const postNewQuestion = useAddQuestion();
+
   const [options, setOptions] = useState([{}, {}]);
+  const [questionId, setQuestionId] = useState(null);
 
-  const handleAddOption = () => {
-    setOptions([...options, {}]); // Add a new option
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "options",
+  });
+  const watchFieldArray = watch("options");
+  const controlledFields = fields.map((field, index) => {
+    return {
+      ...field,
+      ...watchFieldArray[index],
+    };
+  });
+  const deleteQuestion = useDeleteQuestion();
+  const handleDelete = () => {
+    if (questionId) {
+      deleteQuestion?.mutate(questionId, {
+        onSuccess: (data) => {
+          setIsSubmitted(false);
+
+          reset({ ...initialVal, options: [ {}, {} ] });
+        },
+      });
+    }
   };
-  const handleDeleteOption = (indexToRemove: number) => {
-    setOptions(options.filter((_, index) => index !== indexToRemove));
+
+  const onSubmit = (data: any) => {
+    const newOptions = data.options.map((option: any) => option?.name);
+    postNewQuestion?.mutate(
+      {
+        ...data,
+        options: [...newOptions],
+        examId: idOfExam,
+      },
+      {
+        onSuccess: (data) => {
+          setIsSubmitted(true);
+          console.log("added", data);
+          setQuestionId(data.data.id);
+        },
+      }
+    );
   };
+  console.log(isSubmitted);
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form>
       <Grid
         container
         spacing={2}
@@ -62,7 +109,7 @@ function QuestionForm() {
         }}
       >
         <Grid item md={2} xs={12}>
-          <Typography variant="h6">Question </Typography>
+          <Typography variant="h6">Question {indexQuestion + 1}</Typography>
         </Grid>
         <Grid item md={10} xs={12}>
           <Grid container spacing={2}>
@@ -78,51 +125,55 @@ function QuestionForm() {
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-            {options.map((option, index) => (
-              <React.Fragment key={index}>
-                <Grid item xs={4}>
-                  <Input
-                    name={`option_${index}`}
-                    control={control}
-                    rules={{ required: true }}
-                  />
-                </Grid>
-                <Grid item xs={1}>
-                  <IconButton
-                    color="secondary"
-                    onClick={() => handleDeleteOption(index)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Grid>
-              </React.Fragment>
-            ))}
+            {controlledFields.map((field, index) => {
+              return (
+                <React.Fragment key={index}>
+                  <Grid item xs={4}>
+                    <TextField
+                      {...register(`options.${index}.name` as const)}
+                    />
+                  </Grid>
+                  <Grid item xs={1}>
+                    <IconButton color="secondary" onClick={() => remove(index)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Grid>
+                </React.Fragment>
+              );
+            })}
 
             <Grid item xs={2} sx={{ marginTop: "5px" }}>
               <AddIcon
                 type="button"
-                onClick={handleAddOption}
+                onClick={() => {
+                  append({ name: "" });
+                }}
                 fontSize="large"
                 color="primary"
               />
             </Grid>
           </Grid>
         </Grid>
-        <Button
-          type="submit"
-          variant="outlined"
+        <Grid
+          item
+          xs={12}
           sx={{
-            display: "block",
-            width: "100%",
-            border: "dotted",
+            marginTop: "5px",
+            display: "flex",
+            justifyContent: "flex-end",
           }}
-          // disabled={!sessions[sessions.length - 1].start}
         >
-          Save a new Question
-        </Button>
+          <IconButton
+            type="button"
+            color="primary"
+            onClick={isSubmitted ? handleDelete : handleSubmit(onSubmit)}
+          >
+            {isSubmitted ? "Delete" : "Save"}
+          </IconButton>
+        </Grid>
       </Grid>
     </form>
   );
-}
+};
 
 export default QuestionForm;

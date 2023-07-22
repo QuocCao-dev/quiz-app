@@ -31,12 +31,14 @@ class APIClient<T> {
     console.log(id);
     return axiosInstance
       .get<T>(this.endpoint + "/" + id, this.config)
-      .then((res) => res.data)
+      .then((res) => res.data.data)
       .catch((error) => {
+        console.log(error);
         throw error;
       });
   };
   delete = (id: number | string) => {
+    console.log(id);
     return axiosInstance
       .delete<T>(this.endpoint + "/" + id, this.config)
       .then((res) => res);
