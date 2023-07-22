@@ -2,7 +2,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { Box, Button, CardActionArea } from "@mui/material";
+import { Box, Button, CardActionArea, CardActions } from "@mui/material";
 import DialogActions from "@mui/material/DialogActions";
 import CloseIcon from "@mui/icons-material/Close";
 import useDeleteExam from "@/hooks/exam/useDeleteExam";
@@ -14,9 +14,8 @@ function ExamCard(data: any) {
   const handleDelete = () => {
     deleteExam.mutate(data?.data.id);
   };
-
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 360 }}>
       <CardActionArea>
         <DialogActions onClick={handleDelete}>
           <CloseIcon />
@@ -42,6 +41,9 @@ function ExamCard(data: any) {
       <DialogActions>
         <Link to={`/exams/${data?.data.id}/edit`}>
           <Button>Add Questions</Button>
+        </Link>
+        <Link to={`/exams/${data?.data.id}/testing`}>
+          <Button>Take an exam</Button>
         </Link>
       </DialogActions>
     </Card>

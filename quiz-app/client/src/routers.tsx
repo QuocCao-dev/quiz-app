@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ExamPage from "./pages/ExamPage";
 import ExamForm from "./components/exam/ExamForm";
+import ExamTest from "./components/examTest/ExamTest";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/exams/add", element: <ExamForm /> },
       { path: "/exams/:id", element: <ExamForm /> },
       { path: "/exams/:id/edit", element: <ExamForm /> },
+      { path: "/exams/:id/testing", element: <ExamTest /> },
     ],
   },
 ]);

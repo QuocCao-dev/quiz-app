@@ -42,10 +42,11 @@ function ExamForm() {
     mode: "onChange",
     resolver: zodResolver(examSchema),
   });
-  console.log(formState);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const { id: examId } = useParams();
   const [questions, setQuestions] = useState([{}, {}, {}, {}]); // initialize with 4 questions
-
+  const navigate = useNavigate();
   const handleAddQuestion = () => {
     setQuestions([...questions, {}]); // Add a new question
   };
@@ -54,8 +55,19 @@ function ExamForm() {
   };
   const postNewUser = useAddExam();
   const onSubmit = (data: Exam) => {
-    console.log(data);
-    postNewUser?.mutate(data!);
+    if (examId) {
+      alert("edit successfully");
+      navigate("/exams");
+    } else {
+      postNewUser?.mutate(
+        { data },
+        {
+          onSuccess: (data) => {
+            setIsSubmitted(true);
+          },
+        }
+      );
+    }
   };
   const [isEditing, setIsEditing] = useState(false);
   const [existingExam, setExistingExam] = useState(null);
@@ -167,9 +179,21 @@ function ExamForm() {
           mt: 3,
         }}
       >
-        <Button sx={{ m: 1 }} type="submit" variant="contained">
-          Save
-        </Button>
+        {isSubmitted && (
+          <>
+            <Button sx={{ m: 1 }} type="submit" variant="contained">
+              Edit
+            </Button>
+            <Button sx={{ m: 1 }} type="submit" variant="contained">
+              Delete
+            </Button>
+          </>
+        )}
+        {!isSubmitted && (
+          <Button sx={{ m: 1 }} type="submit" variant="contained">
+            Save
+          </Button>
+        )}
       </Box>
     </form>
   );

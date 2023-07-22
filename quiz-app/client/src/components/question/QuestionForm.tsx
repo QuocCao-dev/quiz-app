@@ -19,6 +19,7 @@ import useAddQuestion from "@/hooks/question/useAddQuestion";
 import { useParams } from "react-router-dom";
 import { useFieldArray } from "react-hook-form";
 import useDeleteQuestion from "@/hooks/question/useDeleteQuestion";
+import usePutQuestion from "@/hooks/question/usePutQuestion";
 
 const initialVal = {
   name: "",
@@ -36,6 +37,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
     handleSubmit,
     register,
     reset,
+    getValues,
     control,
     formState: { errors },
   } = useForm<any>({
@@ -47,11 +49,13 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const postNewQuestion = useAddQuestion();
+  const deleteQuestion = useDeleteQuestion();
+  const putNewQuestion = usePutQuestion();
 
   const [options, setOptions] = useState([{}, {}]);
   const [questionId, setQuestionId] = useState(null);
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name: "options",
   });
@@ -62,19 +66,36 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
       ...watchFieldArray[index],
     };
   });
-  const deleteQuestion = useDeleteQuestion();
   const handleDelete = () => {
     if (questionId) {
       deleteQuestion?.mutate(questionId, {
         onSuccess: (data) => {
           setIsSubmitted(false);
 
-          reset({ ...initialVal, options: [ {}, {} ] });
+          reset({ ...initialVal });
+          replace({ name: "" });
         },
       });
     }
   };
+  const handleEdit = () => {
+    const data = getValues();
+    const newOptions = data.options.map((option: any) => option?.name);
 
+    putNewQuestion?.mutate(
+      {
+        ...data,
+        options: [...newOptions],
+        examId: Number(idOfExam),
+        id: questionId
+      },
+      {
+        onSuccess: (data) => {
+          console.log("edited", data);
+        },
+      }
+    );
+  };
   const onSubmit = (data: any) => {
     const newOptions = data.options.map((option: any) => option?.name);
     postNewQuestion?.mutate(
@@ -86,7 +107,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
       {
         onSuccess: (data) => {
           setIsSubmitted(true);
-          console.log("added", data);
           setQuestionId(data.data.id);
         },
       }
@@ -163,13 +183,25 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
             justifyContent: "flex-end",
           }}
         >
+        {isSubmitted && (
+          <>
+            <IconButton type="button" color="primary" onClick={handleEdit}>
+              Edit
+            </IconButton>
+            <IconButton type="button" color="primary" onClick={handleDelete}>
+              Delete
+            </IconButton>
+          </>
+        )}
+        {!isSubmitted && (
           <IconButton
             type="button"
             color="primary"
-            onClick={isSubmitted ? handleDelete : handleSubmit(onSubmit)}
+            onClick={handleSubmit(onSubmit)}
           >
-            {isSubmitted ? "Delete" : "Save"}
+            Save
           </IconButton>
+        )}
         </Grid>
       </Grid>
     </form>

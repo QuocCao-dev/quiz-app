@@ -55,7 +55,7 @@ class APIClient<T> {
 
   put = (data: T) => {
     return axiosInstance
-      .put<T>(this.endpoint + "/" + `${data?.id}`, data, this.config)
+      .patch<T>(this.endpoint + "/" + `${data?.id}`, data, this.config)
       .then((res) => res.data);
   };
 }
