@@ -20,14 +20,6 @@ const usePutQuestion = () => {
           console.log(response);
         },
       }
-      // {
-      //   // Always refetch after error or success:
-      //   onSettled: () => {
-      //     queryClient.invalidateQueries({
-      //       queryKey: ["exams", "details", question?.examId],
-      //     });
-      //   },
-      // }
     );
     return mutation;
   } catch (error: any) {

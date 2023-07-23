@@ -15,13 +15,11 @@ const usePutExam = () => {
 
   return useMutation<exam, Error>({
     mutationFn: (newExam: exam) => apiClient.put(newExam),
-    
+
     onError: (err: any, newExam: exam, context: any) => {
       queryClient.setQueryData(["exams"], context.previousExams);
     },
     onSuccess: () => {
-      toast.success("Exam is added");
-      navigate("/exams");
     },
     // Always refetch after error or success:
     onSettled: () => {

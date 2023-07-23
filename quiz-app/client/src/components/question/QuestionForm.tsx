@@ -1,5 +1,5 @@
 import { questionSchema, Question } from "@/models/examType";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Box,
@@ -29,9 +29,13 @@ const initialVal = {
 };
 type QuestionFormProps = {
   indexQuestion: number;
+  question: any;
 };
 
-const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
+const QuestionForm: React.FC<QuestionFormProps> = ({
+  indexQuestion,
+  question,
+}) => {
   const {
     watch,
     handleSubmit,
@@ -87,7 +91,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
         ...data,
         options: [...newOptions],
         examId: Number(idOfExam),
-        id: questionId
+        id: questionId,
       },
       {
         onSuccess: (data) => {
@@ -112,7 +116,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
       }
     );
   };
-  console.log(isSubmitted);
+  // useEffect(() => {
+  //   if (question) {
+  //     reset(question); // Setting form data to existing exam data
+  //   } else {
+  //     reset(initialVal); // Setting form data to initial value
+  //   }
+  // }, [question]);
+  console.log(question);
   return (
     <form>
       <Grid
@@ -183,25 +194,25 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ indexQuestion }) => {
             justifyContent: "flex-end",
           }}
         >
-        {isSubmitted && (
-          <>
-            <IconButton type="button" color="primary" onClick={handleEdit}>
-              Edit
+          {isSubmitted && (
+            <>
+              <IconButton type="button" color="primary" onClick={handleEdit}>
+                Edit
+              </IconButton>
+              <IconButton type="button" color="primary" onClick={handleDelete}>
+                Delete
+              </IconButton>
+            </>
+          )}
+          {!isSubmitted && (
+            <IconButton
+              type="button"
+              color="primary"
+              onClick={handleSubmit(onSubmit)}
+            >
+              Save
             </IconButton>
-            <IconButton type="button" color="primary" onClick={handleDelete}>
-              Delete
-            </IconButton>
-          </>
-        )}
-        {!isSubmitted && (
-          <IconButton
-            type="button"
-            color="primary"
-            onClick={handleSubmit(onSubmit)}
-          >
-            Save
-          </IconButton>
-        )}
+          )}
         </Grid>
       </Grid>
     </form>

@@ -54,9 +54,14 @@ class APIClient<T> {
   };
 
   put = (data: T) => {
+    console.log(data);
     return axiosInstance
       .patch<T>(this.endpoint + "/" + `${data?.id}`, data, this.config)
-      .then((res) => res.data);
+      .then((res) => res.data)
+      .catch((error) => {
+        console.log(error);
+        throw error;
+      });
   };
 }
 

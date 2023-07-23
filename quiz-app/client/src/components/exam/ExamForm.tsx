@@ -21,6 +21,7 @@ import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useExam from "@/hooks/exam/useExam";
+import usePutExam from "@/hooks/exam/usePutExam";
 
 const initialVal = {
   name: "",
@@ -53,17 +54,23 @@ function ExamForm() {
   const handleDeleteQuestion = (indexToDelete: number) => {
     setQuestions(questions.filter((_, index) => index !== indexToDelete)); // Remove a specific question
   };
-  const postNewUser = useAddExam();
+  const postNewExam = useAddExam();
+  const updateExam = usePutExam();
   const onSubmit = (data: Exam) => {
     if (examId) {
-      alert("edit successfully");
-      navigate("/exams");
+      updateExam?.mutate(data, {
+        onSuccess: (data) => {
+          toast("Updated successfully!");
+          navigate("/exams");
+        },
+      });
     } else {
-      postNewUser?.mutate(
-        { data },
+      postNewExam?.mutate(
+        data,
         {
           onSuccess: (data) => {
-            setIsSubmitted(true);
+            toast("Added successfully!");
+            navigate("/exams");
           },
         }
       );
@@ -77,6 +84,7 @@ function ExamForm() {
       setExistingExam(exam);
       reset(exam); // Setting form data to existing exam data
       setIsEditing(true);
+      setQuestions([...exam.questions])
     } else {
       setExistingExam(null);
       reset(initialVal); // Setting form data to initial value
@@ -139,7 +147,7 @@ function ExamForm() {
             {examId &&
               questions.map((question: any, index: number) => (
                 <React.Fragment key={index}>
-                  <QuestionForm indexQuestion={index} />
+                  <QuestionForm indexQuestion={index} question={question} />
                   {index >= 4 && ( // Only show the DeleteIcon for questions after the first four
                     <Grid item xs={1} style={{ textAlign: "right" }}>
                       <IconButton
@@ -179,7 +187,7 @@ function ExamForm() {
           mt: 3,
         }}
       >
-        {isSubmitted && (
+        {examId && (
           <>
             <Button sx={{ m: 1 }} type="submit" variant="contained">
               Edit
@@ -189,7 +197,7 @@ function ExamForm() {
             </Button>
           </>
         )}
-        {!isSubmitted && (
+        {!examId && (
           <Button sx={{ m: 1 }} type="submit" variant="contained">
             Save
           </Button>
