@@ -45,7 +45,7 @@ const Login = () => {
   // call api getme with token
   //  const token = useStore.getState().token;
 
-// set user infor useStore.getState().setUser(user);
+  // set user infor useStore.getState().setUser(user);
 
   return (
     <div>
@@ -69,7 +69,7 @@ const Login = () => {
           />
           <Button
             type="submit"
-            color="primary"
+            color="warning"
             variant="contained"
             style={btnstyle}
             fullWidth
